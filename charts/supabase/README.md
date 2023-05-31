@@ -38,7 +38,7 @@ kubectl -n default create secret generic rad-supabase-db \
   --from-literal=password='radiance1111' 
 
 # Install the chart
-helm -n default install rad -f values.example.yaml .
+helm -n default install supabase -f values.example.yaml .
 ```
 
 The first deployment can take some time to complete (especially auth service). You can view the status of the pods using:
@@ -77,7 +77,7 @@ If you just use the `value.example.yaml` file, you can access the API or the Stu
 
 ```Bash
 # Uninstall Helm chart
-helm -n default uninstall rad 
+helm -n default uninstall supabase 
 
 # Delete secrets
 kubectl -n default delete secret rad-supabase-db
