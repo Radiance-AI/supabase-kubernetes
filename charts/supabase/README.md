@@ -110,16 +110,16 @@ We encourage you to use your own JWT keys by generating a new Kubernetes secret 
 
 ```yaml
   jwt:
-    secretName: "JWT_SECRET_NAME"
+    secretName: "rad-supabase-jwt"
 ```
 
 The secret can be created with kubectl via command-line:
 
 ```bash
-kubectl -n NAMESPACE create secret generic JWT_SECRET_NAME \
-  --from-literal=secret='JWT_TOKEN_AT_LEAST_32_CHARACTERS_LONG' \
-  --from-literal=anonKey='JWT_ANON_KEY' \
-  --from-literal=serviceKey='JWT_SERVICE_KEY'
+kubectl -n default create secret generic rad-supabase-jwt \
+  --from-literal=anonKey='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc1NDAwNDAwLAogICAgImV4cCI6IDE4MzMxNjY4MDAKfQ.ztuiBzjaVoFHmoljUXWmnuDN6QU2WgJICeqwyzyZO88' \
+  --from-literal=serviceKey='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAic2VydmljZV9yb2xlIiwKICAgICJpc3MiOiAic3VwYWJhc2UiLAogICAgImlhdCI6IDE2NzU0MDA0MDAsCiAgICAiZXhwIjogMTgzMzE2NjgwMAp9.qNsmXzz4tG7eqJPh1Y58DbtIlJBauwpqx39UF-MwM8k' \
+  --from-literal=secret='abcdefghijklmnopqrstuvwxyz123456'
 ```
 
 > 32 characters long secret can be generated with `openssl rand 64 | base64`
@@ -131,15 +131,15 @@ Connection credentials for the SMTP mail server will also be provided via Kubern
 
 ```yaml
   smtp:
-    secretName: "SMTP_SECRET_NAME"
+    secretName: "rad-supabase-smtp"
 ```
 
 The secret can be created with kubectl via command-line:
 
 ```bash
-kubectl -n NAMESPACE create secret generic SMTP_SECRET_NAME \
-  --from-literal=username='SMTP_USER' \
-  --from-literal=password='SMTP_PASSWORD'
+kubectl -n default create secret generic rad-supabase-smtp \
+  --from-literal=username='contact@radiance-ai.com' \
+  --from-literal=password='radiance1111'
 ```
 
 ### DB Secret
@@ -148,15 +148,15 @@ DB credentials will also be stored in a Kubernetes secret and referenced in `val
 
 ```yaml
   db:
-    secretName: "DB_SECRET_NAME"
+    secretName: "rad-supabase-db"
 ```
 
 The secret can be created with kubectl via command-line:
 
 ```bash
-kubectl -n NAMESPACE create secret generic DB_SECRET_NAME \
-  --from-literal=username='DB_USER' \
-  --from-literal=password='PW_USER'
+kubectl -n default create secret generic rad-supabase-db \
+  --from-literal=username='postgres' \
+  --from-literal=password='radiance1111' 
 ```
 
 > If you depend on database providers like [StackGres](https://stackgres.io/) or [Postgres Operator](https://github.com/zalando/postgres-operator) you only need to reference the already existing secret in `values.yaml`.
