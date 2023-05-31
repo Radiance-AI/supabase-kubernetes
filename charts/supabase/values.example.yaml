@@ -26,7 +26,7 @@ studio:
   environment:
     SUPABASE_URL: http://db.radiance-ai.com
     SUPABASE_REST_URL: http://db.radiance-ai.com/rest/v1/
-    STUDIO_PG_META_URL: http://rad-supabase-kong.default.svc.cluster.local:8000/pg
+    STUDIO_PG_META_URL: http://rad-supabase-kong.radiance-ai.com:8000/pg
     SUPABASE_PUBLIC_URL: http://db.radiance-ai.com/
   ingress:
     enabled: true
@@ -50,7 +50,7 @@ auth:
   image:
     repo: v2.40.1
   environment:
-    DB_HOST: rad-supabase-db.default.svc.cluster.local
+    DB_HOST: rad-supabase-db.radiance-ai.com
     DB_PORT: "5432"
     DB_DRIVER: postgres
     DB_NAME: postgres
@@ -82,7 +82,7 @@ rest:
     repository: postgrest/postgrest
     tag: v9.0.1.20220717
   environment:
-    DB_HOST: rad-supabase-db.default.svc.cluster.local
+    DB_HOST: rad-supabase-db.radiance-ai.com
     DB_PORT: "5432"
     DB_DRIVER: postgres
     DB_NAME: postgres
@@ -96,7 +96,7 @@ realtime:
     repository: supabase/realtime
     tag: v2.1.0
   environment:
-    DB_HOST: rad-supabase-db.default.svc.cluster.local
+    DB_HOST: rad-supabase-db.radiance-ai.com
     DB_PORT: "5432"
     DB_NAME: postgres
     DB_SSL: "false"
@@ -116,7 +116,7 @@ realtime:
     DNS_NODES: "''"
 meta:
   environment:
-    DB_HOST: rad-supabase-db.default.svc.cluster.local
+    DB_HOST: rad-supabase-db.radiance-ai.com
     DB_PORT: "5432"
     DB_DRIVER: postgres
     DB_NAME: postgres
@@ -128,12 +128,12 @@ storage:
     repository: supabase/storage-api
     tag: v0.26.1
   environment:
-    DB_HOST: rad-supabase-db.default.svc.cluster.local
+    DB_HOST: rad-supabase-db.radiance-ai.com
     DB_PORT: "5432"
     DB_DRIVER: postgres
     DB_NAME: postgres
     DB_SSL: disable
-    POSTGREST_URL: http://rad-supabase-rest.default.svc.cluster.local:3000
+    POSTGREST_URL: http://rad-supabase-rest.radiance-ai.com:3000
     PGOPTIONS: -c search_path=storage,public
     FILE_SIZE_LIMIT: '52428800'
     STORAGE_BACKEND: file
