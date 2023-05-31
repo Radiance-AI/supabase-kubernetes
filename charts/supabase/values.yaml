@@ -12,11 +12,11 @@
 # Anon & Service key: Studio, Storage, Kong
 # JWT Secret: Auth, Rest, Realtime, Storage
 jwt:
-  secretName: "JWT_SECRET_NAME"
+  secretName: "rad-supabase-jwt"
 
 # smtp will be used to reference secret including smtp credentials
 smtp:
-  secretName: "SMTP_SECRET_NAME"
+  secretName: "rad-supabase-smtp"
 
 # Optional: Postgres Database
 # A standalone Postgres database configured to work with Supabase services. 
@@ -24,12 +24,20 @@ smtp:
 # If so, make sure to adjust DB_HOST accordingly to point to the right database service.
 db:
   enabled: false # Disable the database provisioning
-  secretName: "DB_SECRET_NAME" # Still NEEDS TO BE DEFINED, even if database provisioning is disabled
+  secretName: "rad-supabase-db" # Still NEEDS TO BE DEFINED, even if database provisioning is disabled
   image:
     repository: supabase/postgres
     pullPolicy: IfNotPresent
     tag: "latest"
   imagePullSecrets: []
+  persistence: 
+    enabled: true
+  storage:
+    mountPath: /var/lib/postgresql/data
+    size: 20Gi
+    storageClass: standard
+    annotations:
+      helm.sh/resource-policy: "keep"
   replicaCount: 1
   nameOverride: ""
   fullnameOverride: ""
@@ -64,11 +72,11 @@ db:
       # cert-manager.io/cluster-issuer: "letsencrypt-staging"
       # kubernetes.io/tls-acme: "true"
     tls:
-      - secretName: DB.EXAMPLE.COM
+      - secretName: rdb.radiance-ai.com
         hosts:
-          - DB.EXAMPLE.COM
+          - rdb.radiance-ai.com
     hosts:
-      - host: DB.EXAMPLE.COM
+      - host: rdb.radiance-ai.com
         paths:
           - path: /
             pathType: Prefix
@@ -140,9 +148,10 @@ studio:
     type: ClusterIP
     port: 3000
   environment:
-    SUPABASE_URL: https://API.EXAMPLE.COM
-    SUPABASE_REST_URL: https://API.EXAMPLE.COM/rest/v1/
-    STUDIO_PG_META_URL: http://RELEASE_NAME-kong.NAMESPACE.svc.cluster.local:8000/pg
+    SUPABASE_URL: https://rdb.radiance-ai.com
+    SUPABASE_PUBLIC_URL: https://rdb.radiance-ai.com
+    SUPABASE_REST_URL: https://rdb.radiance-ai.com/rest/v1/
+    STUDIO_PG_META_URL: https://rkong.radiance-ai.com:8000/pg
   ingress:
     enabled: true
     className: "nginx"
@@ -151,11 +160,11 @@ studio:
       # cert-manager.io/cluster-issuer: "letsencrypt-staging"
       # kubernetes.io/tls-acme: "true"
     tls:
-      - secretName: STUDIO.EXAMPLE.COM
+      - secretName: rstudio.radiance-ai.com
         hosts:
-          - STUDIO.EXAMPLE.COM
+          - rstudio.radiance-ai.com
     hosts:
-      - host: STUDIO.EXAMPLE.COM
+      - host: rstudio.radiance-ai.com
         paths:
           - path: /
             pathType: Prefix
@@ -227,14 +236,14 @@ auth:
     type: ClusterIP
     port: 9999
   environment:
-    DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: rdb.radiance-ai.com
     DB_PORT: "5432"
     DB_DRIVER: postgres
     DB_NAME: postgres
     DB_SSL: allow # disable, allow, prefer, require, verify-ca, verify-full
     GOTRUE_API_HOST: "0.0.0.0"
     GOTRUE_API_PORT: "9999"
-    GOTRUE_SITE_URL: https://STUDIO.EXAMPLE.COM
+    GOTRUE_SITE_URL: https://rstudio.radiance-ai.com
     GOTRUE_URI_ALLOW_LIST: "*"
     GOTRUE_DISABLE_SIGNUP: "false"
     GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
@@ -243,16 +252,16 @@ auth:
     GOTRUE_JWT_EXP: "3600"
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
     GOTRUE_MAILER_AUTOCONFIRM: "true"
-    GOTRUE_SMTP_ADMIN_EMAIL: "SMTP_ADMIN_MAIL"
-    GOTRUE_SMTP_HOST: "SMTP_HOST"
-    GOTRUE_SMTP_PORT: "SMTP_PORT"
-    GOTRUE_SMTP_SENDER_NAME: "SMTP_SENDER_NAME"
+    GOTRUE_SMTP_ADMIN_EMAIL: "contact@radiance-ai.com"
+    GOTRUE_SMTP_HOST: "smtp.radiance-ai.com"
+    GOTRUE_SMTP_PORT: "587"
+    GOTRUE_SMTP_SENDER_NAME:  "contact@radiance-ai.com"
     GOTRUE_EXTERNAL_PHONE_ENABLED: "false"
     GOTRUE_SMS_AUTOCONFIRM: "false"
-    GOTRUE_MAILER_URLPATHS_INVITE: "https://API.EXAMPLE.COM/auth/v1/verify"
-    GOTRUE_MAILER_URLPATHS_CONFIRMATION: "https://API.EXAMPLE.COM/auth/v1/verify"
-    GOTRUE_MAILER_URLPATHS_RECOVERY: "https://API.EXAMPLE.COM/auth/v1/verify"
-    GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: "https://API.EXAMPLE.COM/auth/v1/verify"
+    GOTRUE_MAILER_URLPATHS_INVITE: "https://api.radiance-ai.com/auth/v1/verify"
+    GOTRUE_MAILER_URLPATHS_CONFIRMATION: "https://api.radiance-ai.com/auth/v1/verify"
+    GOTRUE_MAILER_URLPATHS_RECOVERY: "https://api.radiance-ai.com/auth/v1/verify"
+    GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: "https://api.radiance-ai.com/auth/v1/verify"
   ingress:
     enabled: false
     className: ""
@@ -287,7 +296,7 @@ auth:
   autoscaling:
     enabled: true
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 10
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   nodeSelector: {}
@@ -300,7 +309,7 @@ rest:
   image:
     repository: postgrest/postgrest
     pullPolicy: IfNotPresent
-    tag: "latest" 
+    tag: "latest"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -326,7 +335,7 @@ rest:
     type: ClusterIP
     port: 3000
   environment:
-    DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: rdb.radiance-ai.com
     DB_PORT: "5432"
     DB_DRIVER: postgres
     DB_NAME: postgres
@@ -407,7 +416,7 @@ realtime:
     type: ClusterIP
     port: 4000
   environment:
-    DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: rdb.radiance-ai.com
     DB_PORT: "5432"
     DB_NAME: postgres
     DB_SSL: "false"
@@ -451,7 +460,7 @@ realtime:
   autoscaling:
     enabled: true
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 10
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   nodeSelector: {}
@@ -491,7 +500,7 @@ meta:
     type: ClusterIP
     port: 8080
   environment:
-    DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: rdb.radiance-ai.com
     DB_PORT: "5432"
     DB_DRIVER: postgres
     DB_NAME: postgres
@@ -531,7 +540,7 @@ meta:
   autoscaling:
     enabled: true
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 10
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   nodeSelector: {}
@@ -571,12 +580,12 @@ storage:
     type: ClusterIP
     port: 5000
   environment:
-    DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: rdb.radiance-ai.com
     DB_PORT: "5432"
     DB_DRIVER: postgres
     DB_NAME: postgres
     DB_SSL: allow # disable, allow, prefer, require, verify-ca, verify-full
-    POSTGREST_URL: http://RELEASE_NAME-rest.NAMESPACE.svc.cluster.local:3000
+    POSTGREST_URL: http://rest.radiance-ai.com:3000
     PGOPTIONS: -c search_path=storage,public
     FILE_SIZE_LIMIT: '52428800'
     STORAGE_BACKEND: file
@@ -626,7 +635,7 @@ storage:
   autoscaling:
     enabled: true
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 10
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   nodeSelector: {}
@@ -679,11 +688,11 @@ kong:
       # cert-manager.io/cluster-issuer: "letsencrypt-staging"
       # kubernetes.io/tls-acme: "true"
     tls:
-      - secretName: API.EXAMPLE.COM
+      - secretName: api.radiance-ai.com
         hosts:
-          - API.EXAMPLE.COM
+          - api.radiance-ai.com
     hosts:
-      - host: API.EXAMPLE.COM
+      - host: api.radiance-ai.com
         paths:
           - path: /
             pathType: Prefix
@@ -715,7 +724,7 @@ kong:
   autoscaling:
     enabled: true
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 10
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   nodeSelector: {}
