@@ -22,23 +22,23 @@ git clone https://github.com/supabase-community/supabase-kubernetes
 cd supabase-kubernetes/charts/supabase/
 
 # Create JWT secret
-kubectl -n default create secret generic demo-supabase-jwt \
+kubectl -n default create secret generic rad-supabase-jwt \
   --from-literal=anonKey='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc1NDAwNDAwLAogICAgImV4cCI6IDE4MzMxNjY4MDAKfQ.ztuiBzjaVoFHmoljUXWmnuDN6QU2WgJICeqwyzyZO88' \
   --from-literal=serviceKey='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAic2VydmljZV9yb2xlIiwKICAgICJpc3MiOiAic3VwYWJhc2UiLAogICAgImlhdCI6IDE2NzU0MDA0MDAsCiAgICAiZXhwIjogMTgzMzE2NjgwMAp9.qNsmXzz4tG7eqJPh1Y58DbtIlJBauwpqx39UF-MwM8k' \
   --from-literal=secret='abcdefghijklmnopqrstuvwxyz123456'
 
 # Create SMTP secret
-kubectl -n default create secret generic demo-supabase-smtp \
-  --from-literal=username='your-mail@example.com' \
-  --from-literal=password='example123456'
+kubectl -n default create secret generic rad-supabase-smtp \
+  --from-literal=username='contact@radiance-ai.com' \
+  --from-literal=password='radiance1111'
 
 # Create DB secret
-kubectl -n default create secret generic demo-supabase-db \
+kubectl -n default create secret generic rad-supabase-db \
   --from-literal=username='postgres' \
-  --from-literal=password='example123456' 
+  --from-literal=password='radiance1111' 
 
 # Install the chart
-helm -n default install demo -f values.example.yaml .
+helm -n default install rad -f values.example.yaml .
 ```
 
 The first deployment can take some time to complete (especially auth service). You can view the status of the pods using:
@@ -47,13 +47,13 @@ The first deployment can take some time to complete (especially auth service). Y
 kubectl -n default get pod 
 
 NAME                                      READY   STATUS    RESTARTS      AGE
-demo-supabase-auth-78547c5c8d-chkbm       1/1     Running   2 (40s ago)   47s
-demo-supabase-db-5bc75fbf56-4cxcv         1/1     Running   0             47s
-demo-supabase-kong-8c666695f-5vzwt        1/1     Running   0             47s
-demo-supabase-meta-6779677c7-s77qq        1/1     Running   0             47s
-demo-supabase-realtime-6b55986d7d-csnr7   1/1     Running   0             47s
-demo-supabase-rest-5d864469d-bk5rv        1/1     Running   0             47s
-demo-supabase-storage-6c878dcbd4-zzzcv    1/1     Running   0             47s
+rad-supabase-auth-78547c5c8d-chkbm       1/1     Running   2 (40s ago)   47s
+rad-supabase-db-5bc75fbf56-4cxcv         1/1     Running   0             47s
+rad-supabase-kong-8c666695f-5vzwt        1/1     Running   0             47s
+rad-supabase-meta-6779677c7-s77qq        1/1     Running   0             47s
+rad-supabase-realtime-6b55986d7d-csnr7   1/1     Running   0             47s
+rad-supabase-rest-5d864469d-bk5rv        1/1     Running   0             47s
+rad-supabase-storage-6c878dcbd4-zzzcv    1/1     Running   0             47s
 ```
 
 ### Tunnel with Minikube
@@ -77,12 +77,12 @@ If you just use the `value.example.yaml` file, you can access the API or the Stu
 
 ```Bash
 # Uninstall Helm chart
-helm -n default uninstall demo 
+helm -n default uninstall rad 
 
 # Delete secrets
-kubectl -n default delete secret demo-supabase-db
-kubectl -n default delete secret demo-supabase-jwt
-kubectl -n default delete secret demo-supabase-smtp
+kubectl -n default delete secret rad-supabase-db
+kubectl -n default delete secret rad-supabase-jwt
+kubectl -n default delete secret rad-supabase-smtp
 ```
 
 ## Customize
